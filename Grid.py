@@ -6,6 +6,12 @@ class Grid:
         self.matrix = [[0 for i in range(4)] for j in range(4)]
         self.placeTile(tile1, row1, col1)
         self.placeTile(tile2, row2, col2)
+    
+    def print(self):
+        for i in range(4):
+            for j in range(4):
+                print(self.matrix[i][j], end=' ')
+            print()
 
     def placeTile(self, tile, row, col):
         self.matrix[row-1][col-1] = tile
@@ -45,7 +51,7 @@ class Grid:
             k = -1
             for j in range(3, -1, -1):
                 if self.matrix[i][j] > 0:
-                    k = i
+                    k = j
                     break
             if k > -1:
                 for j in range(k, 0, -1):
@@ -60,7 +66,7 @@ class Grid:
             k = -1
             for j in range(4):
                 if self.matrix[i][j] > 0:
-                    k = i
+                    k = j
                     break
             if k > -1:
                 for j in range(k, 3):
@@ -96,25 +102,103 @@ class Grid:
         return places
     
     def up(self):
-        if not self.canMoveUp():
-            return False
-        # Do stuff
-        return True
+        for j in range(4):
+            w = 0
+            k = 0
+            for i in range(4):
+                if self.matrix[i][j] == 0:
+                    continue
+                if k == 0:
+                    k = self.matrix[i][j]
+                elif k == self.matrix[i][j]:
+                    self.matrix[w][j] = 2*k
+                    w += 1
+                    k = 0
+                else:
+                    self.matrix[w][j] = k
+                    w += 1
+                    k = self.matrix[i][j]
+            if k != 0:
+                self.matrix[w][j] = k
+                w += 1
+            for i in range(w, 4):
+                self.matrix[i][j] = 0
     
     def down(self):
-        if not self.canMoveDown():
-            return False
-        # Do stuff
-        return True
+        for j in range(4):
+            w = 3
+            k = 0
+            for i in range(3, -1, -1):
+                if self.matrix[i][j] == 0:
+                    continue
+                if k == 0:
+                    k = self.matrix[i][j]
+                elif k == self.matrix[i][j]:
+                    self.matrix[w][j] = 2*k
+                    w -= 1
+                    k = 0
+                else:
+                    self.matrix[w][j] = k
+                    w -= 1
+                    k = self.matrix[i][j]
+            if k != 0:
+                self.matrix[w][j] = k
+                w -= 1
+            for i in range(w+1):
+                self.matrix[i][j] = 0
     
     def left(self):
-        if not self.canMoveLeft():
-            return False
-        # Do stuff
-        return True
+        for i in range(4):
+            w = 0
+            k = 0
+            for j in range(4):
+                if self.matrix[i][j] == 0:
+                    continue
+                if k == 0:
+                    k = self.matrix[i][j]
+                elif k == self.matrix[i][j]:
+                    self.matrix[i][w] = 2*k
+                    w += 1
+                    k = 0
+                else:
+                    self.matrix[i][w] = k
+                    w += 1
+                    k = self.matrix[i][j]
+            if k != 0:
+                self.matrix[i][w] = k
+                w += 1
+            for j in range(w, 4):
+                self.matrix[i][j] = 0
     
     def right(self):
-        if not self.canMoveRight():
-            return False
-        # Do stuff
-        return True
+        for i in range(4):
+            w = 3
+            k = 0
+            for j in range(3, -1, -1):
+                if self.matrix[i][j] == 0:
+                    continue
+                if k == 0:
+                    k = self.matrix[i][j]
+                elif k == self.matrix[i][j]:
+                    self.matrix[i][w] = 2*k
+                    w -= 1
+                    k = 0
+                else:
+                    self.matrix[i][w] = k
+                    w -= 1
+                    k = self.matrix[i][j]
+            if k != 0:
+                self.matrix[i][w] = k
+                w -= 1
+            for j in range(w+1):
+                self.matrix[i][j] = 0
+    
+    def move(self, mv):
+        if mv == 0:
+            self.up()
+        elif mv == 1:
+            self.down()
+        elif mv == 2:
+            self.left()
+        else:
+            self.right()
