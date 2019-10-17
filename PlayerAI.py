@@ -1,13 +1,20 @@
+from typing import Tuple
+from sys import maxsize as MAX_INT
 from Grid import Grid
-from random import randint, seed
+
+def maximize(state: Grid, a: int, b: int) -> Tuple[Grid, int]:
+    ''# TODO
+    return (state, 1)
+
+def minimize(state: Grid, a: int, b: int) -> Tuple[Grid, int]:
+    ''# TODO
+    return (state, 1)
 
 class PlayerAI:
     def __init__(self, grid: Grid):
-        seed()
         self.grid = grid
 
-    def getBestMove(self):
-        moves = self.grid.getAvailableMoves()
-        l = len(moves)
-        # TODO
-        return moves[randint(0, l-1)]
+    def getBestMove(self) -> int:
+        (child, _) = maximize(Grid(matrix=self.grid.getMatrix()), -1, MAX_INT)
+        return self.grid.getMoveTo(child)
+    

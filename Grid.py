@@ -1,11 +1,19 @@
+from copy import deepcopy
+
+MOVES = { 0: "Up", 1: "Down", 2: "Left", 3: "Right" }
+
 class Grid:
 
-    MOVES = { 0: "Up", 1: "Down", 2: "Left", 3: "Right" }
-
-    def __init__(self, tile1, row1, col1, tile2, row2, col2):
-        self.matrix = [[0 for i in range(4)] for j in range(4)]
-        self.placeTile(tile1, row1, col1)
-        self.placeTile(tile2, row2, col2)
+    def __init__(self, tile1 = 2, row1 = 1, col1 = 1, tile2 = 2, row2 = 1, col2 = 1, matrix = None):
+        if matrix is None:
+            self.matrix = [[0 for i in range(4)] for j in range(4)]
+            self.placeTile(tile1, row1, col1)
+            self.placeTile(tile2, row2, col2)
+        else:
+            self.matrix = matrix
+    
+    def getMatrix(self):
+        return deepcopy(self.matrix)
     
     def print(self):
         for i in range(4):
@@ -202,3 +210,9 @@ class Grid:
             self.left()
         else:
             self.right()
+    
+    def getMoveTo(self, child: 'Grid') -> int:
+        # TODO
+        return 1
+    
+    # TODO: Add more methods for utility(), isTerminal(), getChildren(), etc.

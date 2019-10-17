@@ -1,4 +1,4 @@
-from Grid import Grid
+from Grid import Grid, MOVES
 from PlayerAI import PlayerAI
 
 if __name__ == '__main__':
@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     while not grid.isGameOver():
         move = player.getBestMove()
-        print(f'Best move: {Grid.MOVES[move]}')
+        print(f'Best move: {MOVES[move]}')
         grid.move(move)
         grid.print()
         line = input('Enter new tile:')
