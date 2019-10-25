@@ -1,10 +1,11 @@
+from typing import List, Tuple
 from copy import deepcopy
 
 MOVES = { 0: "Up", 1: "Down", 2: "Left", 3: "Right" }
 
 class Grid:
 
-    def __init__(self, tile1 = 2, row1 = 1, col1 = 1, tile2 = 2, row2 = 1, col2 = 1, matrix = None):
+    def __init__(self, tile1 = 2, row1 = 1, col1 = 1, tile2 = 2, row2 = 1, col2 = 2, matrix = None):
         if matrix is None:
             self.matrix = [[0 for i in range(4)] for j in range(4)]
             self.placeTile(tile1, row1, col1)
@@ -12,6 +13,13 @@ class Grid:
         else:
             self.matrix = matrix
     
+    def __eq__(self, other: 'Grid'):
+        for i in range(4):
+            for j in range(4):
+                if self.matrix[i][j] != other.matrix[i][j]:
+                    return False
+        return True
+
     def getMatrix(self):
         return deepcopy(self.matrix)
     
@@ -84,7 +92,7 @@ class Grid:
                     return True
         return False
     
-    def getAvailableMoves(self):
+    def getAvailableMovesForMax(self) -> List[int]:
         moves = []
 
         if self.canMoveUp():
@@ -98,15 +106,16 @@ class Grid:
         
         return moves
     
-    def isGameOver(self):
+    def isGameOver(self) -> bool:
         return len(self.getAvailableMoves()) == 0
     
-    def getAvailablePlaces(self):
+    def getAvailableMovesForMin(self) -> List[Tuple]:
         places = []
         for i in range(4):
             for j in range(4):
                 if self.matrix[i][j] == 0:
-                    places.append((i+1, j+1))
+                    places.append((i+1, j+1, 2))
+                    places.append((i+1, j+1, 4))
         return places
     
     def up(self):
@@ -212,7 +221,39 @@ class Grid:
             self.right()
     
     def getMoveTo(self, child: 'Grid') -> int:
-        # TODO
-        return 1
+        if self.canMoveUp():
+            g = Grid(matrix=self.getMatrix())
+            g.up()
+            if g == child:
+                return 0
+        if self.canMoveDown():
+            g = Grid(matrix=self.getMatrix())
+            g.down()
+            if g == child:
+                return 1
+        if self.canMoveLeft():
+            g = Grid(matrix=self.getMatrix())
+            g.left()
+            if g == child:
+                return 2
+        return 3
     
-    # TODO: Add more methods for utility(), isTerminal(), getChildren(), etc.
+    def utility(self):
+        max = 2
+        for i in range(4):
+            for j in range(4):
+                if self.matrix[i][j] > max:
+                    max = self.matrix[i][j]
+        return max
+    
+    def isTerminal(self, who: str) -> bool:
+        if who == "max":
+            return len(self.getAvailableMovesForMax()) == 0
+        elif who == "min":
+            return len(self.getAvailableMovesForMin()) == 0
+    
+    def getChildren(self, who: str) -> List:
+        if who == "max":
+            return self.getAvailableMovesForMax()
+        elif who == "min":
+            return self.getAvailableMovesForMin()
