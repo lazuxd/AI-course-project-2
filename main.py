@@ -1,3 +1,4 @@
+from time import clock
 from Grid import Grid, MOVES
 from PlayerAI import PlayerAI
 
@@ -13,8 +14,11 @@ if __name__ == '__main__':
     player = PlayerAI(grid)
 
     while not grid.isGameOver():
+        start = clock()
         move = player.getBestMove()
+        end = clock()
         print(f'Best move: {MOVES[move]}')
+        print(f'Time taken: {round(end-start, 2)}')
         grid.move(move)
         grid.print()
         line = input('Enter new tile:')

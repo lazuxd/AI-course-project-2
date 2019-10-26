@@ -5,7 +5,7 @@ MOVES = { 0: "Up", 1: "Down", 2: "Left", 3: "Right" }
 
 class Grid:
 
-    def __init__(self, tile1 = 2, row1 = 1, col1 = 1, tile2 = 2, row2 = 1, col2 = 2, matrix = None):
+    def __init__(self, tile1 = 2, row1 = 1, col1 = 1, tile2 = 2, row2 = 1, col2 = 2, matrix = None) -> None:
         if matrix is None:
             self.matrix = [[0 for i in range(4)] for j in range(4)]
             self.placeTile(tile1, row1, col1)
@@ -13,7 +13,7 @@ class Grid:
         else:
             self.matrix = matrix
     
-    def __eq__(self, other: 'Grid'):
+    def __eq__(self, other: 'Grid') -> bool:
         for i in range(4):
             for j in range(4):
                 if self.matrix[i][j] != other.matrix[i][j]:
@@ -23,16 +23,16 @@ class Grid:
     def getMatrix(self):
         return deepcopy(self.matrix)
     
-    def print(self):
+    def print(self) -> None:
         for i in range(4):
             for j in range(4):
                 print(self.matrix[i][j], end=' ')
             print()
 
-    def placeTile(self, tile, row, col):
+    def placeTile(self, tile: int, row: int, col: int) -> None:
         self.matrix[row-1][col-1] = tile
     
-    def canMoveUp(self):
+    def canMoveUp(self) -> bool:
         for j in range(4):
             k = -1
             for i in range(3, -1, -1):
@@ -47,7 +47,7 @@ class Grid:
                     return True
         return False
 
-    def canMoveDown(self):
+    def canMoveDown(self) -> bool:
         for j in range(4):
             k = -1
             for i in range(4):
@@ -62,7 +62,7 @@ class Grid:
                     return True
         return False
 
-    def canMoveLeft(self):
+    def canMoveLeft(self) -> bool:
         for i in range(4):
             k = -1
             for j in range(3, -1, -1):
@@ -77,7 +77,7 @@ class Grid:
                     return True
         return False
 
-    def canMoveRight(self):
+    def canMoveRight(self) -> bool:
         for i in range(4):
             k = -1
             for j in range(4):
@@ -107,7 +107,16 @@ class Grid:
         return moves
     
     def isGameOver(self) -> bool:
-        return len(self.getAvailableMoves()) == 0
+        if self.canMoveUp():
+            return False
+        if self.canMoveDown():
+            return False
+        if self.canMoveLeft():
+            return False
+        if self.canMoveRight():
+            return False
+        
+        return True
     
     def getAvailableMovesForMin(self) -> List[Tuple]:
         places = []
@@ -118,7 +127,7 @@ class Grid:
                     places.append((i+1, j+1, 4))
         return places
     
-    def up(self):
+    def up(self) -> None:
         for j in range(4):
             w = 0
             k = 0
@@ -141,7 +150,7 @@ class Grid:
             for i in range(w, 4):
                 self.matrix[i][j] = 0
     
-    def down(self):
+    def down(self) -> None:
         for j in range(4):
             w = 3
             k = 0
@@ -164,7 +173,7 @@ class Grid:
             for i in range(w+1):
                 self.matrix[i][j] = 0
     
-    def left(self):
+    def left(self) -> None:
         for i in range(4):
             w = 0
             k = 0
@@ -187,7 +196,7 @@ class Grid:
             for j in range(w, 4):
                 self.matrix[i][j] = 0
     
-    def right(self):
+    def right(self) -> None:
         for i in range(4):
             w = 3
             k = 0
@@ -210,7 +219,7 @@ class Grid:
             for j in range(w+1):
                 self.matrix[i][j] = 0
     
-    def move(self, mv):
+    def move(self, mv: int) -> None:
         if mv == 0:
             self.up()
         elif mv == 1:
@@ -238,7 +247,7 @@ class Grid:
                 return 2
         return 3
     
-    def utility(self):
+    def utility(self) -> int:
         max = 2
         for i in range(4):
             for j in range(4):
@@ -246,11 +255,33 @@ class Grid:
                     max = self.matrix[i][j]
         return max
     
+    def utilityEstimate(self) -> int:
+        count = 0
+        sum = 0
+        for i in range(4):
+            for j in range(4):
+                sum += self.matrix[i][j]
+                if self.matrix[i][j] != 0:
+                    count += 1
+        return int(sum/count)
+    
     def isTerminal(self, who: str) -> bool:
         if who == "max":
-            return len(self.getAvailableMovesForMax()) == 0
+            if self.canMoveUp():
+                return False
+            if self.canMoveDown():
+                return False
+            if self.canMoveLeft():
+                return False
+            if self.canMoveRight():
+                return False
+            return True
         elif who == "min":
-            return len(self.getAvailableMovesForMin()) == 0
+            for i in range(4):
+                for j in range(4):
+                    if self.matrix[i][j] == 0:
+                        return False
+            return True
     
     def getChildren(self, who: str) -> List:
         if who == "max":
